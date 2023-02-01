@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            text-align: center;
+        }
+    </style>
+</head>
+<body id="main">
+    
+</body>
+<script>
+    let main = document.getElementById("main");
+    fetch("https://randomuser.me/api/")
+    .then(respuesta => {
+        if(respuesta.ok){
+            return respuesta.json();
+        }else{
+            throw new Error("Los datos no han llegado correctamente");            
+        }
+    }).then(listaPersona => {
+        let persona = listaPersona.results[0];
+        let nombre = persona.name.title;
+        let apellido = persona.name.first;
+        let foto = persona.picture.medium;
+        let mail = persona.email;
+        let calle = persona.location.street.name;
+        let ciudad = persona.location.city;
+        let estado = persona.location.state;
+        
+        main.innerHTML = 
+            `<figure>`+
+            `<img src = '${foto}' alt = 'foto'>`+
+            `<p> ${nombre} ${apellido} </p>`+ 
+            `<p>Email: ${mail} </p>`+
+            `<p>${calle}</p>`+
+            `<p>${ciudad} (${estado.toUpperCase()})</p>`;        
+            console.log(listaPersona.results[0]);
+    }).catch(
+        error => {main.innerText = error});
+    
+</script>
+</html>

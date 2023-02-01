@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<main id="main">
+    <h1>Imagen del día de la AEMET</h1>
+    <form action="#">
+        <label for="apikey">Pega tu API Key</label><br>
+        <textarea name="apikey" id="apikey" cols="30" rows="10"></textarea><br>
+        <button>Cargar mapa</button>
+    </form>
+</main>
+<script>
+    
+    let main = document.getElementById("main");
+    let form = document.querySelector("form");
+    var headers = new Headers({
+        "cache-control": "no-cache"
+    });
+    //let apiKey = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtZXRhbHNpbHZlcjAwM0BnbWFpbC5jb20iLCJqdGkiOiJhZGNiYmUyNy0yZjAwLTQxNjUtYjc3ZS0wZGJlMmJiODkzYjciLCJpc3MiOiJBRU1FVCIsImlhdCI6MTY3MzQ2MjQ2OSwidXNlcklkIjoiYWRjYmJlMjctMmYwMC00MTY1LWI3N2UtMGRiZTJiYjg5M2I3Iiwicm9sZSI6IiJ9.0qUJkrWNm7PVslTa7CGrAL0utjOVn23V07YfrTJNdcw";
+    var conf= {
+        method: "GET",
+        mode: "cors",
+        headers: headers
+    }
+
+    window.addEventListener("load", (ev) => {
+        let apiKey = document.querySelector("textarea");
+        let boton = document.querySelector("button");
+        boton.addEventListener("click", (ev) => {
+            ev.preventDefault();
+            
+            fetch("https://opendata.aemet.es/opendata/api/mapasygraficos/analisis?api_key=" + apiKey.value, conf)
+            .then(respuesta => {
+                if(respuesta.ok){                    
+                    return respuesta.json();                        
+                }else{
+                    throw new Error("Los datos no han sido alcanzables");
+                }        
+            }).then(listaInformacion => 
+                fetch(listaInformacion.datos, conf).then( resultado => resultado.blob())
+                    .then(resultadoBlob => {
+                        let img = document.createElement("img");
+                        img.setAttribute("src", URL.createObjectURL(resultadoBlob));
+                        main.removeChild(form);
+                        main.appendChild(img);
+                    })).catch(error => {
+                let p = document.createElement("p");
+                p.innerHTML = error;
+                main.appendChild(p);
+            });
+
+        });
+
+    })
+
+</script>
+</body>
+</html>

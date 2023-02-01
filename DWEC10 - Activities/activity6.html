@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div#main{
+            display: flex;
+            justify-content:space-evenly;            
+        }
+    </style>    
+</head>
+
+<body>
+
+    <div id="main">
+
+    </div>
+    
+</body>
+<script>
+    //creo un array vacio
+    var main = document.getElementById("main");
+    var array = [];
+   
+    //obtencion de imagense "urls"
+    fetch("https://randomuser.me/api/?results=1000").then( respuseta => {    
+        //lo pasamos a json
+        return respuseta.json();
+    }).then(result => {    
+        
+        //metemos todas las fotos en un array
+        for(let i= 0; i< 1000; i++){            
+            let url = result.results[i].picture.large;            
+            array[i]= url;
+        }        
+        
+        //creo 6 imagenes con posiciones aleatorias del array
+        for(let i = 0; i<6; i++){
+            let numAleatorio = parseInt(Math.random() * (array.length - 0));
+            //console.log(numAleatorio);            
+            let img = document.createElement("img");
+            img.setAttribute("src", array[numAleatorio]);
+            main.appendChild(img);
+            //elimino la posicion del array que he puesto para que no se repita
+            array.pop(numAleatorio);                        
+        }        
+        //creo un contador para el intervalo
+        var cont = 0;
+        let temp1 = setInterval(() => {
+            //si el contador llega a 100 pararemos
+            if(cont<=100){        
+                cont++;
+                //llamamos la funcion
+                cambiarUrl(1);
+                cambiarUrl(2);
+                cambiarUrl(3);
+                cambiarUrl(4);
+                cambiarUrl(5);
+                cambiarUrl(6);
+            
+            }else{
+                //si lo supera terminamos el intervalor
+                clearInterval(temp1);
+            }
+            //cada 2 decimas d segundo...
+        },200);
+
+    })  
+
+    //funcion que cambiara la url de la imagen 
+    function cambiarUrl(num){
+        //cojeremos la imagen deseada
+        let anteriorIMG = document.querySelectorAll("img:nth-of-type("+num+")")[0];    
+        //crearemos una nueva
+        let nuevoIMG = document.createElement("img");        
+
+        //le pasaremos una url nueva a la imagen nueva
+        let numAleatorio = parseInt(Math.random() * (array.length - 0));        
+        nuevoIMG.src = array[numAleatorio];
+        
+        //eliminaremos la posicion del array
+        array.pop(numAleatorio);
+        //remplazaremos la anterior por la nueva
+        main.replaceChild(nuevoIMG, anteriorIMG);
+    }      
+    
+</script>
+</html>

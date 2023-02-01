@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div#main{
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: center;
+        }
+        div#main *{
+            margin: 5px;            
+        }
+    </style>
+</head>
+<body>
+
+    <div id="main">
+
+    </div>    
+</body>
+<script>
+    let main = document.getElementById("main"); 
+    
+    //cogeremos el valor de la cookie
+    let id = document.cookie.split("=")[1];
+        
+    //recorreremos el bucle
+    for(let i = 1; i<=12; i++){        
+        //crearemos 12 imagenes
+        let img = document.createElement("img");
+        //crearemos ids diferentes
+        img.setAttribute("id" , i);                    
+        //las añadiremos
+        main.appendChild(img);
+        //haremos dos peticiones una de imagenes normales y otra de imagenes borrosas
+        fetch("https://picsum.photos/id/"+i+"/300/300.jpg")
+        .then(imagenes => {
+            fetch("https://picsum.photos/id/"+i+"/300/300?blur")
+            .then(blur => {
+                //si el id de la cookie es igual que el id de la imagen quiere decir que tiene que ser borrosa
+                if(id == i){
+                    img.setAttribute("src" , blur.url);
+                }//sino quiere decir que es una foto normal
+                else{
+                    img.setAttribute("src" , imagenes.url);
+                }
+                //crearemos eventos a cada imagen que al clicar...
+                img.addEventListener("click", (ev) => {           
+                    //si la url es blur al clicarla, la cambiaremos a no blur                    
+                    if(ev.target.src == blur.url){                        
+                        ev.target.src = imagenes.url;
+                        //le quitaremos el valor a la cookie
+                        document.cookie = "fotoBlur="+0; 
+                    }else{                        
+                        //si no es blur la pondremos blur y resetearemos la pagina
+                        ev.target.src = blur.url;
+                        document.cookie = "fotoBlur="+ev.target.id;                                     
+                        location.reload();
+                    }                                        
+                })
+            })
+        })
+    }    
+
+</script>
+</html>

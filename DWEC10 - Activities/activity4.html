@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang=es>
+
+<head>
+    <meta charset=UTF-8>
+    
+    <title>Document</title>
+    <style>
+        body {
+            text-align: center;
+        }
+
+        h1 {
+            font-family: sans-serif;
+            color: #999999;
+        }
+
+        button {
+            padding: .5em;
+            border: none;
+            outline: none;
+            background-color: rgb(71, 114, 163);
+            color: white;
+            width: 250px;
+
+        }
+        td{
+            text-align:right;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Conversión de monedas</h1>
+    <form action="#">
+        <table align="center">
+            <tr>
+                <td>
+                    <input type="number" placeholder="Moneda base" size="4" style="text-align: right" id="cantidad">
+                </td>
+                <td>
+                    <select name=moneda1 id=moneda1> 
+                        <option>AUD</option>
+                        <option>BGN</option>
+                        <option>BRL</option>
+                        <option>CAD</option>
+                        <option>CHF</option>
+                        <option>CNY</option>
+                        <option>CZK</option>
+                        <option>DKK</option>
+                        <option selected>EUR</option>
+                        <option>GBP</option>
+                        <option>HKD</option>
+                        <option>HRK</option>
+                        <option>HUF</option>
+                        <option>IDR,</option>
+                        <option>INR</option>
+                        <option>ILS</option>
+                        <option>ISK</option>
+                        <option>KRW</option>
+                        <option>MXN</option>
+                        <option>JPY</option>
+                        <option>NOK</option>
+                        <option>NZD</option>
+                        <option>PHP</option>
+                        <option>PLN</option>
+                        <option>RON</option>
+                        <option>RUB</option>
+                        <option>SEK</option>
+                        <option>SGD</option>
+                        <option>THB</option>
+                        <option>TRY</option>
+                        <option>USD</option>
+                        <option>ZAR</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="moneda2">Convertir a..</label>
+                </td>
+                <td>
+                    <select name=moneda2 id=moneda2>
+                        <option>AUD</option>
+                        <option>BGN</option>
+                        <option>BRL</option>
+                        <option>CAD</option>
+                        <option>CHF</option>
+                        <option>CNY</option>
+                        <option>CZK</option>
+                        <option>DKK</option>
+                        <option>EUR</option>
+                        <option selected>GBP</option>
+                        <option>HKD</option>
+                        <option>HRK</option>
+                        <option>HUF</option>
+                        <option>IDR,</option>
+                        <option>INR</option>
+                        <option>ILS</option>
+                        <option>ISK</option>
+                        <option>KRW</option>
+                        <option>MXN</option>
+                        <option>JPY</option>
+                        <option>NOK</option>
+                        <option>NZD</option>
+                        <option>PHP</option>
+                        <option>PLN</option>
+                        <option>RON</option>
+                        <option>RUB</option>
+                        <option>SEK</option>
+                        <option>SGD</option>
+                        <option>THB</option>
+                        <option>TRY</option>
+                        <option>USD</option>
+                        <option>ZAR</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <br><button id="boto">Convertir</button>
+        <p id="resultado"><strong>Resultado: </strong>0</p>
+    </form>
+    <script>
+        async function procesarFetch(m1, m2, cant) {
+            try {
+                var myHeaders = new Headers();
+                myHeaders.append("apikey", "M7i4sz1SjtglzsBmPV387XokkG1gbA0U");
+                var requestOptions = {
+                    method: 'GET',
+                    redirect: 'follow',
+                    headers: myHeaders
+                };
+
+                let resp1 = await fetch(`https://api.apilayer.com/exchangerates_data/convert?to=${m1}&from=${m2}&amount=${cant}`, requestOptions)
+                
+                const data = await resp1.json();
+                console.log(data);
+                return data;
+            }
+            catch (error) {
+                console.log(error);
+                return error;
+            }
+        }
+
+        //Código principal dentro del evento load
+        // para asegurar la carga de los componentes
+        let boto = document.getElementById("boto");
+        
+        boto.addEventListener('click', (ev) => {
+            let resultado = document.getElementById("resultado");
+            ev.preventDefault();
+            let monedaBase = document.getElementById("moneda1");
+            let moneda2 = document.getElementById("moneda2");
+            let cantidad = document.getElementById("cantidad");            
+            procesarFetch(monedaBase.value, moneda2.value, cantidad.value).then( res => {
+                let dosDecimales = res.result;
+                dosDecimales= dosDecimales.toFixed(2) ;
+                resultado.innerHTML = "<p><strong>Resultado: </strong>"+ dosDecimales +"</p>"
+            }).catch( error => {
+                resultado.innerText = error;
+            });
+            
+        });        
+    </script>
+</body>
+
+</html>
